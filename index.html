@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="r5StdQ_RF_oLTOgVuAOLJKcdtAdkLT9pVsCKyLL1c5E" /> <!-- IMPORtANT GOOGLE VERIFICATION -->
+    <title>ayan shashidhar</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollToPlugin.min.js"></script> <!-- Added ScrollToPlugin for smooth scrolling -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none; /*Firefox*/
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --white: #f8f8f8;
+            --gray: #333333;
+            cursor: none;
+        }
+
+        ::selection {
+            background-color: #5e5c5c;
+            color: #000000;
+        }
+        
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            transition: transform 0.3s ease; /* For potential content shifting */
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        /* --- Menu Overlay Styles --- */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); /* Semi-transparent black */
+            z-index: 99; /* Below preloader, above content */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .menu-overlay nav ul {
+            list-style: none;
+            text-align: center;
+        }
+
+        .menu-overlay nav ul li {
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-overlay nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 500;
+            letter-spacing: 0.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .menu-overlay nav ul li a:hover {
+            color: var(--gray);
+        }
+
+        /* State when menu is open */
+        body.menu-open {
+            overflow: hidden; /* Prevent scrolling when menu is open */
+        }
+
+        body.menu-open .menu-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- End Menu Overlay Styles --- */
+
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Styles for the new preloader button */
+        .preloader-button {
+            background: none;
+            border: 1px solid var(--white); /* Add a subtle border */
+            color: var(--white);
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            letter-spacing: 0.2rem;
+            cursor: pointer;
+            opacity: 0; /* Initially hidden, will be animated in */
+            transition: all 0.3s ease; /* Smooth transition for hover effects */
+            overflow: hidden; /* Hide overflow for text animation */
+            position: relative; /* For pseudo-element hover effect */
+            display: flex; /* To center the text span */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preloader-button:hover {
+            background-color: var(--white);
+            color: var(--black);
+        }
+
+        .preloader-button:hover .preloader-text {
+            color: var(--black); /* Ensure text color changes on hover */
+        }
+
+        /* Optional: Add a cool fill effect on hover */
+        .preloader-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--white);
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .preloader-button:hover::before {
+            transform: scaleX(1);
+        }
+
+        .preloader-text {
+            font-size: 1.5rem;
+            letter-spacing: 0.2rem;
+            /* opacity: 0;  REMOVE THIS LINE as it's now handled by the button's opacity */
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 0.1rem;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 101; /* Ensure button is above menu overlay */
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 500;
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .hero h1 span {
+            display: inline-block;
+            transform: translateY(100%);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            opacity: 0;
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0; /* Changed to 0, will be animated in */
+        }
+
+        .scroll-down span {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .scroll-down .line {
+            width: 1px;
+            height: 50px;
+            background: var(--white);
+        }
+
+        .about {
+            padding: 10rem 2rem;
+        }
+
+        .about h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 500;
+            margin-bottom: 3rem;
+            opacity: 1;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .about-text {
+            opacity: 1;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .skills {
+            opacity: 1;
+        }
+
+        .skills h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .skill-item {
+            margin-bottom: 1rem;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-bar {
+            height: 1px;
+            background: var(--gray);
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: var(--white);
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        .work {
+            padding: 10rem 2rem;
+        }
+
+        .work h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 500;
+            margin-bottom: 3rem;
+            opacity: 1;
+        }
+
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .work-item {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+            opacity: 1;
+        }
+
+        .work-item img {
+            width: auto;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .work-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .work-item:hover .work-overlay {
+            transform: translateY(0);
+        }
+
+        .work-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .contact {
+            padding: 10rem 2rem;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 500;
+            margin-bottom: 3rem;
+            opacity: 1;
+        }
+
+        .contact p {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            font-size: 1.2rem;
+            opacity: 1;
+        }
+
+        .email-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border: 1px solid var(--white);
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .email-btn:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+
+        p {
+            color: white;
+        }
+
+
+
+        .copyright {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+
+
+        /*IMPORTANT CSS CURSOR SHIT TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTttt */
+
+
+        #cursor {
+            position: fixed;
+            
+            top: -5px;
+            left: -5px;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000000;
+        }
+        
+        #cursor-border {
+          --size: 50px;
+          position: fixed;
+          top: calc(var(--size) / -2);
+          left: calc(var(--size) / -2);
+          width: var(--size);
+          height: var(--size);
+          border-radius: 50%;
+          box-shadow: 0 0 0 1px white;
+          pointer-events: none;
+          transition: top 0.15s ease-out, left 0.15s ease-out, width 0.15s ease-out,
+            height 0.15s ease-out, background-color 0.15s ease-out;
+          z-index: 10000000;
+        }
+
+        /* New CSS for cursor on interactive elements hover */
+        /* This CSS rule is less specific and will be overridden by JS for more control */
+        /* .interactive-element:hover ~ #cursor-border {
+            background-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.5);
+            width: 75px;
+            height: 75px;
+            box-shadow: 0 0 0 2px white;
+        } */
+
+        /* --------------------------BUTTON----------------------*/
+        button {
+          font-family: "Century Gothic", sans-serif;
+          font-size: 2rem;
+          padding: 1rem 2rem;
+          background-color: transparent;
+          color: black;
+          border: 1px solid #64ffda;
+          border-radius: 0;
+          box-shadow: 0 0 10px #64ffda, 0 0 10px #64ffda inset;
+          text-shadow: 0 0 5px #64ffda, 0 0 10px #64ffda;
+          transition: 0.9s ease-out;
+        }
+        
+        button:hover {
+          color: black;
+          background-color: #64ffda;
+          border-color: #64ffda;
+          box-shadow: 0 0 80px #64ffda;
+        }
+        
+        button:active {
+          transform: scale(0.85);
+          box-shadow: 0 0 30px #64ffda;
+        }
+        
+        button:nth-of-type(2) {
+          margin-left: 2rem;
+          color: white;
+          border: 1px solid white;
+          box-shadow: 0 0 10px white, 0 0 10px white inset;
+          text-shadow: 0 0 5px white, 0 0 10px white;
+        }
+        
+        button:nth-of-type(2):hover {
+          color: black;
+          background-color: white;
+          border-color: white;
+          box-shadow: 0 0 80px white;
+        }
+        
+        button:nth-of-type(2):active {
+          transform: scale(0.85);
+          box-shadow: 0 0 30px white;
+        }
+
+
+
+        a {
+            color: #54b3d6;
+            overflow: hidden;
+        }
+
+        a:visited {
+            color: #54b3d6;
+        }
+
+        a::before {
+          background-color: #54b3d6;
+          height: 2px;
+          bottom: 0;
+          transform-origin: 100% 50%;
+          transform: scaleX(0);
+          transition: transform .3s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+        a::after {
+          content: attr(data-replace);
+          height: 100%;
+          top: 0;
+          transform-origin: 100% 50%;
+          transform: translate3d(200%, 0, 0);
+          transition: transform .3s cubic-bezier(0.76, 0, 0.24, 1);
+          color: #54b3d6;
+        }
+        
+        a:hover::before {
+          transform-origin: 0% 50%;
+          transform: scaleX(1);
+        }
+        a:hover::after {
+          transform: translate3d(0, 0, 9);
+        }
+        
+        a span {
+          display: inline-block;
+          transition: transform .3s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+        
+        a:hover span {
+          transform: translate3d(-200%, 0, 0);
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="preloader">
+        <button class="preloader-button" id="preloaderButton">
+            <span class="preloader-text">AYAN SHASHIDHAR</span>
+        </button>
+    </div>
+
+    <header>
+        <div class="logo">A.S.</div>
+        <button class="menu-btn" id="menuButton">MENU</button>
+    </header>
+
+    <!-- CURSOR -->
+
+    <div id="cursor"></div>
+    <div id="cursor-border"></div>
+    
+
+    <!-- Full-screen Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay">
+        <nav>
+            <ul>
+                <li><a href="#about" class="menu-link">ABOUT</a></li>
+                <li><a href="#work" class="menu-link">WORK</a></li>
+                <li><a href="#contact" class="menu-link">CONTACT</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <section class="hero">
+        <h1>
+            <span>AYAN</span>
+            <span>SHASHIDHAR</span>
+        </h1>
+        <p>High school student with a passion for learning.</p>
+        <div class="scroll-down">
+            <span>SCROLL</span>
+            <div class="line"></div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <h2>ABOUT</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>Howdy, I'm Ayan Shashidhar, a high school student located near Houston, TX. I attend school at the magnet school ACES (The Academy for Careers of Engineering and Science) at Oak Ridge High School and am very involved within my school. I am part of my school's AFJROTC unit (#951), where I hold multiple leadership positions and take part in many sub-clubs. I volunteer regularly in my community and am a part of my local Young Men's Service League (YMSL).</p>
+                <p> I also am a black belt (Degree 2, Level 2) in Taekwondo at Tiger Rock of The Woodlands, where I am a Junior Volunteer Instructor and regularly volunteer to teach classes. Every summer since 2023, I have taught a programming camp at the Hindu Temple of The Woodlands. In addition, I enjoy playing the piano and  guitar.</p>
+                <p>In my free time, I enjoy working out, <strong><a href="https://allpoetry.com/ayan_shashidhar" target="_blank">writing</a></strong>, and <strong><a href="https://github.com/ayanshashidhar" target="_blank">coding</a></strong>. In fact, I designed this website myself. Check out the website project I made when I was 13 years old <strong><a href="https://blackjack2010.pythonanywhere.com" target="_blank">here</a></strong>.</p>
+            </div>
+            <div class="skills">
+                <h3>SKILLS</h3>
+                <div class="skill-item">
+                    <div class="skill-name">
+                        <span>Design</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-name">
+                        <span>Programming</span>
+                        <span>60%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-name">
+                        <span>Communications and Marketing</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-name">
+                        <span>Leadership Experience</span>
+                        <span>90%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="work" id="work">
+        <h2>WORK</h2>
+        <div class="work-grid">
+            <div class="work-item">
+                <img src="taekwondo.jpg" alt="ayan shashidhar">
+                <div class="work-overlay">
+                    <h3>Taekwondo</h3>
+                    <p>2025 / Black Belt</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <img src="jrotc.jpg" alt="ayan shashidhar">
+                <div class="work-overlay">
+                    <h3>Oak Ridge HS</h3>
+                    <p>2025 / Air Force JROTC</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <img src="award.JPG" alt="ayan shashidhar">
+                <div class="work-overlay">
+                    <h3>Recieving Distinguished Graduate Award (Top 10%)</h3>
+                    <p>2025 / Junior Cadet Leadership Camp</p>
+                </div>
+            </div>
+            <div class="work-item">
+                <img src="piano.jpg" alt="ayan shashidhar">
+                <div class="work-overlay">
+                    <h3>Piano</h3>
+                    <p>2024 / Just a picture.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <h2>LET'S WORK TOGETHER</h2>
+        <p>Need to contact me? I'm available at the email below.</p>
+        <a href="mailto:a.shashidhar@outlook.com" class="email-btn">CONTACT ME</a>
+    </section>
+
+
+    <footer class="copyright">
+        <div class="container">
+            <p>&copy; <span id="year"></span> 2025 ayan shashidhar - all rights reserved</p>  <!-- SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS-->
+        </div>
+    </footer>
+
+
+    
+    <script>
+        console.log("dude this is the console.");
+         
+        
+        // THIS FOLLOWING CODE LOCKS SCROLL DURING BUTTON PHASE:
+        /*$('body').css({'overflow':'hidden'});
+        $(document).bind('scroll',function () { 
+       window.scrollTo(0,0); 
+            });*/
+        const myC = document.getElementById("cursor");
+        const cb = document.getElementById("cursor-border");
+        // IN THIS AREA
+
+        
+        // -----------------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            const preloaderButton = document.getElementById('preloaderButton');
+            const preloader = document.querySelector('.preloader');
+            const preloaderText = document.querySelector('.preloader-text'); // Get the text span
+
+            // Initial animation for the button to appear
+            gsap.to(preloaderButton, {
+                opacity: 1,
+                duration: 1.5,
+                delay: 0.9, // Delay before the button appears
+                ease: 'power2.out'
+            });
+
+            // Add click event listener to the button
+            preloaderButton.addEventListener('click', () => {
+                // Animate the button text out
+                gsap.to(preloaderText, {
+                    y: -50, // Move text up
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power2.in'
+                });
+
+                // Animate the button itself out (scale down and fade)
+                gsap.to(preloaderButton, {
+                    scale: 1,
+                    opacity: 0,
+                    duration: 0.7,
+                    delay: 0.5, // Start slightly after text animation
+                    ease: 'power2.in',
+                    onComplete: () => {
+                        // Animate the preloader container away
+                        gsap.to(preloader, {
+                            y: '-100%',
+                            duration: 1,
+                            ease: 'power3.inOut',
+                            onComplete: () => {
+                                preloader.style.display = 'none'; // Hide preloader completely
+                                // Trigger hero text animation after preloader is gone
+                                animateHeroSection();
+                            }
+                        });
+                    }
+                });
+
+                 $(document).unbind('scroll'); 
+                 $('body').css({'overflow':'visible'});
+
+                
+            });
+
+            // Function to animate the hero section, called after preloader is dismissed
+            function animateHeroSection() {
+                const nameSpans = document.querySelectorAll('.hero h1 span');
+                gsap.to(nameSpans, {
+                    y: 0,
+                    duration: 1,
+                    stagger: 0.3,
+                    ease: 'expo.out'
+                });
+
+                gsap.to('.hero p', {
+                    opacity: 1,
+                    duration: 1,
+                    delay: 0.5, // Slight delay after name animation
+                    ease: 'power2.out'
+                });
+
+                gsap.to('.scroll-down', {
+                    opacity: 1,
+                    duration: 1,
+                    delay: 1, // Slight delay after paragraph animation
+                    ease: 'power2.out',
+                    yoyo: true,
+                    repeat: -1
+                });
+            }
+
+            // ScrollTrigger animations
+            gsap.registerPlugin(ScrollTrigger, ScrollToPlugin); // Registered ScrollToPlugin here
+
+            // About section animations
+            gsap.from('.about h2', {
+                scrollTrigger: {
+                    trigger: '.about',
+                    start: 'top 80%',
+                },
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.about-text', {
+                scrollTrigger: {
+                    trigger: '.about',
+                    start: 'top 70%',
+                },
+                opacity: 0,
+                x: -50,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.skills', {
+                scrollTrigger: {
+                    trigger: '.about',
+                    start: 'top 70%',
+                },
+                opacity: 0,
+                x: 50,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            // Animate skill bars
+            document.querySelectorAll('.skill-progress').forEach(bar => {
+                const percentage = bar.parentElement.previousElementSibling.lastElementChild.textContent;
+                gsap.to(bar, {
+                    scrollTrigger: {
+                        trigger: bar,
+                        start: 'top 80%',
+                    },
+                    scaleX: parseFloat(percentage) / 100,
+                    duration: 1.5,
+                    ease: 'expo.out'
+                });
+            });
+
+            // Work section animations
+            gsap.from('.work h2', {
+                scrollTrigger: {
+                    trigger: '.work',
+                    start: 'top 80%',
+                },
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.work-item', {
+                scrollTrigger: {
+                    trigger: '.work',
+                    start: 'top 70%',
+                },
+                opacity: 0,
+                y: 100,
+                duration: 1,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
+
+            // Contact section animations
+            gsap.from('.contact h2', {
+                scrollTrigger: {
+                    trigger: '.contact',
+                    start: 'top 80%',
+                },
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.contact p', {
+                scrollTrigger: {
+                    trigger: '.contact',
+                    start: 'top 70%',
+                },
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.email-btn', {
+                scrollTrigger: {
+                    trigger: '.contact',
+                    start: 'top 60%',
+                },
+                opacity: 0,
+                y: 30,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            // Scroll position indicator (line)
+            const line = document.querySelector('.scroll-down .line');
+            gsap.to(line, {
+                height: 0,
+                scrollTrigger: {
+                    trigger: 'body',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: true
+                }
+            });
+
+
+            // CURSOR FUNCTION
+            const cursor = document.querySelector("#cursor");
+            const cursorBorder = document.querySelector("#cursor-border");
+            const cursorPos = { x: 0, y: 0 };
+            const cursorBorderPos = { x: 0, y: 0 };
+            
+            document.addEventListener("mousemove", (e) => {
+              cursorPos.x = e.clientX;
+              cursorPos.y = e.clientY;
+            
+              cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            });
+            
+            requestAnimationFrame(function loop() {
+              const easting = 8;
+              cursorBorderPos.x += (cursorPos.x - cursorBorderPos.x) / easting;
+              cursorBorderPos.y += (cursorPos.y - cursorBorderPos.y) / easting;
+            
+              cursorBorder.style.transform = `translate(${cursorBorderPos.x}px, ${cursorBorderPos.y}px)`;
+              requestAnimationFrame(loop);
+            });
+            
+            // Select all interactive elements: buttons and links
+            const interactiveElements = document.querySelectorAll('button, a');
+
+            interactiveElements.forEach((element) => {
+                element.addEventListener('mouseenter', () => {
+                    cursorBorder.style.backgroundColor = "rgba(255, 255, 255, .6)"; // Example color
+                    cursorBorder.style.setProperty("--size", "75px"); // Example size
+                    cursorBorder.style.mixBlendMode = "difference"; // Keep blend mode if desired
+                });
+
+                element.addEventListener('mouseleave', () => {
+                    cursorBorder.style.backgroundColor = "unset";
+                    cursorBorder.style.setProperty("--size", "50px"); // Revert to default size
+                    cursorBorder.style.mixBlendMode = "unset"; // Revert blend mode
+                });
+            });
+
+
+            // --- Menu Button Functionality ---
+            const menuButton = document.getElementById('menuButton');
+            const body = document.body;
+            const menuLinks = document.querySelectorAll('.menu-link'); // Select all menu links
+
+            menuButton.addEventListener('click', () => {
+                body.classList.toggle('menu-open');
+            });
+
+            // Close menu when a link is clicked and smooth scroll
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent default jump
+                    body.classList.remove('menu-open'); // Close the menu
+
+                    const targetId = link.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        gsap.to(window, {
+                            duration: 1,
+                            scrollTo: {
+                                y: targetElement,
+                                offsetY: 0 // Adjust if you have a fixed header
+                            },
+                            ease: 'power2.inOut'
+                        });
+                    }
+                });
+            });
+        });
+
+
+        document.documentElement.style.cursor = 'none';
+    </script>
+</body>
+</html>
