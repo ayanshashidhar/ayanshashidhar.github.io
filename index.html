@@ -9,6 +9,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollToPlugin.min.js"></script> <!-- Added ScrollToPlugin for smooth scrolling -->
     <style>
+
+        .noscroll {
+            overflow: hidden !important;
+            height: 100vh !important; /* HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE*/
+        }
+
+
+        
         * {
             margin: 0;
             padding: 0;
@@ -678,7 +686,15 @@
         /*$('body').css({'overflow':'hidden'});
         $(document).bind('scroll',function () { 
        window.scrollTo(0,0); 
-            });*/
+            });
+            
+            OK THIS FOLLOWING CODE SHOULD WORK:
+            
+            */ 
+
+
+        document.body.classList.add('noscroll'); //thisssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+        
         const myC = document.getElementById("cursor");
         const cb = document.getElementById("cursor-border");
         // IN THIS AREA
@@ -723,6 +739,7 @@
                             ease: 'power3.inOut',
                             onComplete: () => {
                                 preloader.style.display = 'none'; // Hide preloader completely
+                                document.body.classList.remove('noscroll'); // UNLOCK SCROLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
                                 // Trigger hero text animation after preloader is gone
                                 animateHeroSection();
                             }
