@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /gall.html
+Allow: /index.html
+
+Sitemap: https://ayanshashidhar.github.io
